@@ -19,7 +19,21 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    console.log("database connected");
+    const serviceCollection = client.db("doctor_portal").collection("services");
+    const bookingCollection = client.db("doctor_portal").collection("bookings");
+
+    app.get("/service", async (req, res) => {
+      const query = {};
+      const cursor = serviceCollection.find(query);
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+
+    app.post("/booking", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingCollection.insertOne(booking);
+      res.send(result);
+    });
   } finally {
   }
 }
