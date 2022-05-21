@@ -56,8 +56,19 @@ async function run() {
       res.send(users);
     });
 
-    //Create, update User by POST
-    app.post("/user/:email", async (req, res) => {
+    //Make Admin by PUT
+    app.put("/user/admin/:email", verifyJwt, async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const updateDoc = {
+        $set: { role: "admin" },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    //Create, update User by PUT
+    app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
       const user = req.body;
       const filter = { email: email };
