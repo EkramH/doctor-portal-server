@@ -42,11 +42,18 @@ async function run() {
     const bookingCollection = client.db("doctor_portal").collection("bookings");
     const userCollection = client.db("doctor_portal").collection("users");
 
+    // Get all service
     app.get("/service", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
       const services = await cursor.toArray();
       res.send(services);
+    });
+
+    // Get all users
+    app.get("/user", verifyJwt, async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
     });
 
     //Create, update User by POST
