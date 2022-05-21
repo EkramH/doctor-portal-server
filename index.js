@@ -61,7 +61,15 @@ async function run() {
       res.send(services);
     });
 
-    //Booking
+    //Get Booking
+    app.get("/booking", async (req, res) => {
+      const patient = req.query.patient;
+      const query = { patient: patient };
+      const bookings = await bookingCollection.find(query).toArray();
+      res.send(bookings);
+    });
+
+    //Add Booking
     app.post("/booking", async (req, res) => {
       const booking = req.body;
       const query = {
@@ -69,12 +77,10 @@ async function run() {
         date: booking.date,
         patient: booking.patient,
       };
-
       const exists = await bookingCollection.findOne(query);
       if (exists) {
         return res.send({ success: false, booking: exists });
       }
-
       const result = await bookingCollection.insertOne(booking);
       return res.send({ success: true, result });
     });
